@@ -1,0 +1,1 @@
+"""models base class"""
