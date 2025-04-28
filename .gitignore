@@ -6,6 +6,8 @@ __pycache__/
 # Virtual environments
 venv/ .
 .env/
+secrets/
+.env
 
 # IDE settings
 .vscode/
@@ -18,3 +20,4 @@ Thumbs.db
 diagrams/
 database/
 docker-compose.yml
+forme.py
