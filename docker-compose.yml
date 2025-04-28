@@ -1,0 +1,27 @@
+services:
+  db-user:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: user_db
+      POSTGRES_USER: user_user
+      POSTGRES_PASSWORD: user
+    volumes:
+      - postgres_user_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"  # Открываем порт базы данных наружу
+
+  fastapi-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql+asyncpg://user_user:user@db-user:5432/user_db
+    ports:
+      - "8000:8000"  # Открываем порт приложения
+    depends_on:
+      - db-user  # FastAPI запустится только после базы
+    volumes:
+      - .:/app  # Подключаем весь код проекта внутрь контейнера
+
+volumes:
+  postgres_user_data:
