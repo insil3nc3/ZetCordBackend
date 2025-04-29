@@ -1,8 +1,10 @@
 """project settings"""
+import os
+
 from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
-
-load_dotenv(".env")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 class Settings(BaseSettings):
     database_url: str
