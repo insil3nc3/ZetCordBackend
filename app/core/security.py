@@ -1,15 +1,35 @@
 """JWT and security"""
 from datetime import datetime, timedelta, UTC
 from jose import jwt
-
-def create_access_token(data: dict, private_key: str, expires_delta: timedelta):
-    to_encode = data.copy()
-    expire = datetime.now(UTC) + expires_delta
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, private_key, algorithm="RS256")
+from passlib.context import CryptContext
+from app.core.config import settings
+import os
+# token
+def create_token(data: dict, private_key_path: str, expires_delta: timedelta):
+    to_encode = data.copy()  # Копируем входные данные
+    expire = datetime.now(UTC) + expires_delta  # Устанавливаем срок действия токена
+    to_encode.update({"exp": expire.timestamp()})  # Добавляем срок действия в payload
+    with open(private_key_path, "r") as f:
+        private_key = f.read()
+    encoded_jwt = jwt.encode(to_encode, private_key, algorithm="RS256")  # Создаём JWT
     return encoded_jwt
 
-def verify_token(token: str, public_key: str):
-    payload = jwt.decode(token, public_key, algorithms=["RS256"])
-    return payload
+
+def verify_token(token: str, public_key_path: str):
+    with open(public_key_path, "r") as f:
+        public_key = f.read()
+    payload = jwt.decode(token, public_key, algorithms=["RS256"])  # Декодируем токен
+    return payload  # Возвращаем payload (данные) из токена
+
+
+# password
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def hash_password(password: str) -> str:
+    """hashing password"""
+    return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """checks password on match with hash"""
+    return pwd_context.verify(plain_password, hashed_password)
 
