@@ -22,6 +22,7 @@ services:
       - db-user  # FastAPI запустится только после базы
     volumes:
       - .:/app  # Подключаем весь код проекта внутрь контейнера
+      - ./secrets:/secrets
 
 volumes:
   postgres_user_data:
