@@ -1,4 +1,3 @@
-from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
 from app.models.models import Base
 from app.core.config import settings
@@ -12,8 +11,6 @@ async def init_db():
     engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 
     async with engine.begin() as conn:
-        # await conn.run_sync(Base.metadata.create_all)
-        await conn.execute(text("alter table users add column refresh_token TEXT"))
+        await conn.run_sync(Base.metadata.create_all)
 
     print("База данных успешно создана!")
-
