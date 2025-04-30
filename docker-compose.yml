@@ -8,7 +8,14 @@ services:
     volumes:
       - postgres_user_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"  # Открываем порт базы данных наружу
+      - "5432:5432"
+
+  redis:
+    image: redis:7.2
+    container_name: zetcord_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
 
   fastapi-app:
     build:
@@ -16,12 +23,17 @@ services:
       dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgresql+asyncpg://user_user:user@db-user:5432/user_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
-      - "8000:8000"  # Открываем порт приложения
+      - "8000:8000"
     depends_on:
-      - db-user  # FastAPI запустится только после базы
+      - db-user
+      - redis
+    env_file:
+      - .env
     volumes:
-      - .:/app  # Подключаем весь код проекта внутрь контейнера
+      - ./app:/app/app
       - ./secrets:/secrets
 
 volumes:
