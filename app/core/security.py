@@ -1,9 +1,9 @@
 """JWT and security"""
 from datetime import datetime, timedelta, UTC
+
+from fastapi import HTTPException
 from jose import jwt
 from passlib.context import CryptContext
-from app.core.config import settings
-import os
 # token
 def create_token(data: dict, private_key_path: str, expires_delta: timedelta):
     to_encode = data.copy()  # Копируем входные данные
@@ -18,7 +18,11 @@ def create_token(data: dict, private_key_path: str, expires_delta: timedelta):
 def verify_token(token: str, public_key_path: str):
     with open(public_key_path, "r") as f:
         public_key = f.read()
-    payload = jwt.decode(token, public_key, algorithms=["RS256"])  # Декодируем токен
+    payload = jwt.decode(token, public_key, algorithms=["RS256"])
+    expire_time = payload.get("expt")
+    if datetime.now(UTC).timestamp() > expire_time:
+        raise HTTPException(status_code=401, detail="Access token expired")
+    # Декодируем токен
     return payload  # Возвращаем payload (данные) из токена
 
 
