@@ -35,6 +35,7 @@ services:
     volumes:
       - ./app:/app/app
       - ./secrets:/secrets
+      - ./media:/app/media
 
 volumes:
   postgres_user_data:
