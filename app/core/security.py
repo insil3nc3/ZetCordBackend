@@ -19,7 +19,7 @@ def verify_token(token: str, public_key_path: str):
     with open(public_key_path, "r") as f:
         public_key = f.read()
     payload = jwt.decode(token, public_key, algorithms=["RS256"])
-    expire_time = payload.get("expt")
+    expire_time = payload.get("exp")
     if datetime.now(UTC).timestamp() > expire_time:
         raise HTTPException(status_code=401, detail="Access token expired")
     # Декодируем токен
