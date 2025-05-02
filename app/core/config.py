@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int
     refresh_token_expire_days: int
     secret_key: str
+    email_password: str
+    email_login: str
+    redis_host: str
+    redis_port: int
 
     class Config:
         env_file = ".env"
