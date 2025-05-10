@@ -3,6 +3,8 @@ from app.schemas.v1.endpoints.auth import UserCreate, UserLogin
 from app.db.postgres.session import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 import logging
+
+from app.services.auth_service.is_refresh_token_expired import check_refresh_token_expired
 from app.services.auth_service.register import register_user
 from app.services.auth_service.request_code import code_request
 from app.services.auth_service.login import user_login
@@ -64,7 +66,7 @@ async def login_user(user_log_in: UserLogin, response: Response, session: AsyncS
         max_age=60*60*24*7,
         path="auth/refresh"
     )
-    logger.info(f"Successfully logined {user_log_in.email}")
+    logger.info(f"Successfully login {user_log_in.email}")
     return {"access_token": access_token}
 
 @auth_router.post("/refresh")
@@ -81,6 +83,11 @@ async def refresh_access_token(request: Request, response: Response, session: As
         path="auth/refresh"
     )
     return {"access_token": new_access_token}
+
+@auth_router.get("/check_refresh_token")
+async def is_refresh_token_expired(request: Request, session: AsyncSession = Depends(get_session)):
+    is_token_expired = await check_refresh_token_expired(request, session)
+    return is_token_expired
 
 # for user:
 # refresh_token = request.cookies.get("refresh_token")
