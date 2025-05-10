@@ -19,6 +19,8 @@ async def avatar_get(profile_id: int, token: str, session: AsyncSession):
         raise HTTPException(status_code=404, detail="User not found")
 
     filename = await get_avatar_by_id(profile_id, session)
+    if not filename:
+        return None
     avatar_path = Path("media/avatars") / filename
 
     return avatar_path
