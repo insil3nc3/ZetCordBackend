@@ -7,6 +7,7 @@ class PrivateChatCreate(MongoBaseModel):
     user1_id: int
     user2_id: int
     last_message: Optional[dict] = None
+    chat_type: Optional[str] = None
 
 
 class PrivateChatInDB(MongoBaseModel):
@@ -14,6 +15,7 @@ class PrivateChatInDB(MongoBaseModel):
     user1_id: int
     user2_id: int
     last_message: Optional[dict] = None
+    chat_type: str
 
     @classmethod
     def from_mongo(cls, data: dict):
@@ -21,4 +23,7 @@ class PrivateChatInDB(MongoBaseModel):
         data["_id"] = str(data["_id"])
         return cls(**data)
     class Config:
-        orm_mode = True  # Это важно для конвертации данных в модели Pydantic
+        model_config = {
+            "from_attributes": True
+        }
+

@@ -25,7 +25,7 @@ async def edit_nickname(nickname: str, token: str = Depends(oauth2), session: As
 
 AVATAR_DIR = "media/avatars"
 
-@user_router.post("/upload_avatar", status_code=status.HTTP_200_OK)
+@user_router.post("/upload_avatar/", status_code=status.HTTP_200_OK)
 async def upload_avatar(file: UploadFile = File(...), token: str = Depends(oauth2), session: AsyncSession = Depends(get_session)):
     await avatar_upload(file, token, session)
 

@@ -9,7 +9,7 @@ from app.core.config import settings
 
 SQLALCHEMY_DATABASE_URL = settings.database_url
 
-engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=False)
 async_session_maker = sessionmaker(bind=engine, expire_on_commit=False, class_=AsyncSession)
 
 async def get_session():

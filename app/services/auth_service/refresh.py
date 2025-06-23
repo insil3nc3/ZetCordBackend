@@ -17,7 +17,6 @@ async def access_token_refresh(request: Request, session: AsyncSession):
     try:
         payload = verify_token(refresh_token, settings.public_key_path)
         email = payload.get("sub")
-        expire_time = payload.get("exp")
         if not email:
             raise HTTPException(status_code=401, detail="Invalid token")
     except Exception:
@@ -25,10 +24,6 @@ async def access_token_refresh(request: Request, session: AsyncSession):
 
     result = await session.execute(select(Users).where(Users.email == email))
     user = result.scalars().first()
-
-    if datetime.now(UTC).timestamp() > expire_time:
-        raise HTTPException(status_code=401, detail="Refresh token expired")
-
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -38,5 +33,7 @@ async def access_token_refresh(request: Request, session: AsyncSession):
 
     new_access_token = create_token({"sub": user.email, "role": user.role}, settings.private_key_path, expires_delta=timedelta(minutes=settings.access_token_expire_minutes))
     new_refresh_token = create_token({"sub": user.email}, settings.private_key_path, expires_delta=timedelta(days=settings.refresh_token_expire_days))
-
+    user.refresh_token = new_refresh_token
+    await session.commit()
+    await session.refresh(user)
     return new_access_token, new_refresh_token

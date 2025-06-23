@@ -46,11 +46,11 @@ async def user_info_get(
             {"user1_id": search_user.id, "user2_id": user.id}
         ]
     })
-    if not chat:
-        raise HTTPException(
-            status_code=403,
-            detail="No chat found between the current user and the requested user"
-        )
+    # if not chat:
+    #     raise HTTPException(
+    #         status_code=403,
+    #         detail="No chat found between the current user and the requested user"
+    #     )
     # ==============================
 
     # ========== Формирование и возврат данных ==========

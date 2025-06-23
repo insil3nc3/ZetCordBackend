@@ -21,7 +21,7 @@ class UserProfile(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
-    unique_name = Column(String,unique=True)
+    unique_name = Column(String, unique=True)
     avatar = Column(String)
     nickname = Column(String, default="user")
     online_status = Column(Boolean, default=False)

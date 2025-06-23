@@ -1,6 +1,9 @@
 from fastapi import WebSocket
 from typing import Dict
+import logging
 
+logger = logging.getLogger("websocket")
+logger.setLevel(logging.INFO)  # или DEBUG
 class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[int, WebSocket] = {}
@@ -13,9 +16,16 @@ class ConnectionManager:
         self.active_connections.pop(user_id, None)
 
     async def send_json(self, user_id: int, data: dict):
-        ws = self.active_connections.get(user_id)
-        if ws:
-            await ws.send_json(data)
+        try:
+            ws = self.active_connections.get(user_id)
+            if ws:
+                await ws.send_json(data)
+        except Exception as e:
+            logger.info(f"!!! error:  {e}")
+
+
+    async def get_socket(self, user_id: int):
+        return self.active_connections.get(user_id)
 
     async def send_personal_message(self, message: dict, user_id: int):
         websocket = self.active_connections.get(user_id)

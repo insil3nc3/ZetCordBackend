@@ -32,14 +32,17 @@ async def private_chat_create(user2_unique_name: str, db: AsyncIOMotorDatabase, 
         # Приведение к единому формату
         chat_data = PrivateChatCreate(
             user1_id=existing_chat["user1_id"],
-            user2_id=existing_chat["user2_id"]
+            user2_id=existing_chat["user2_id"],
+            chat_type=None
         )
         chat_dict = chat_data.model_dump()
         chat_dict["_id"] = str(existing_chat["_id"])
+        chat_dict["chat_type"] = "existing_chat"
         return chat_dict
 
-    chat_data = PrivateChatCreate(user1_id=user1, user2_id=user2)
+    chat_data = PrivateChatCreate(user1_id=user1, user2_id=user2, chat_type=None)
     chat_dict = chat_data.model_dump()
     result = await db["chats"].insert_one(chat_dict)
     chat_dict["_id"] = str(result.inserted_id)
+    chat_dict["chat_type"] = "new_chat"
     return chat_dict

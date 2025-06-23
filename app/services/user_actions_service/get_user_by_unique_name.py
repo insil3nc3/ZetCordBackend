@@ -28,7 +28,7 @@ async def user_get_info_by_unique_name(user_name, token, session):
         raise HTTPException(status_code=404, detail="Requested user not found")
     # ==============================
 
-    user_data = {"nikcname": search_user.nickname,
+    user_data = {"nickname": search_user.nickname,
                  "id": search_user.id
                  }
     return user_data

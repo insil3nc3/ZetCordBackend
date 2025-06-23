@@ -12,4 +12,4 @@ for user in users:
     print(user.id, user.email, user.hashed_password, user.refresh_token)
 user_profiles = session.query(UserProfile).all()
 for user_profile in user_profiles:
-    print(user_profile.id, user_profile.user_id, user_profile.nickname)
+    print(user_profile.id, user_profile.user_id, user_profile.nickname, user_profile.unique_name, user_profile.avatar)
